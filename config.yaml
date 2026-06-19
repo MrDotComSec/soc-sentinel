@@ -1,0 +1,80 @@
+# SOC Sentinel — Default Configuration
+# Adjust thresholds and preferences here. No code changes required.
+
+monitoring:
+  interval: 5                     # Seconds between each collection cycle
+
+  cpu_threshold: 85               # Alert if CPU usage exceeds this %
+  ram_threshold: 90               # Alert if RAM usage exceeds this %
+
+  # Minimum number of failed login attempts before alerting (reads /var/log/auth.log on Linux)
+  failed_login_threshold: 5
+
+rules:
+  # Processes that are never flagged regardless of network activity
+  process_whitelist:
+    - python3
+    - python
+    - systemd
+    - sshd
+    - nginx
+    - apache2
+    - node
+    - code
+    - chrome
+    - firefox
+
+  # Process names that trigger an immediate alert if seen
+  suspicious_processes:
+    - nc
+    - ncat
+    - netcat
+    - nmap
+    - mimikatz
+    - meterpreter
+    - metasploit
+    - hydra
+    - john
+    - hashcat
+    - tcpdump
+    - wireshark
+
+  # Outbound connections to these ports trigger an alert
+  suspicious_ports:
+    - 4444       # Metasploit default
+    - 1337
+    - 31337      # Elite / Back Orifice
+    - 6666
+    - 6667       # IRC (common C2)
+    - 9001       # Tor
+    - 9050       # Tor SOCKS
+    - 23         # Telnet
+
+  # Specific IPs to flag (CIDR notation not supported in v1)
+  suspicious_ips: []
+
+alerts:
+  sound: true                     # Play a beep/alarm on alert
+  popup: true                     # Show a desktop notification
+  log: true                       # Write alerts to disk
+  log_path: "logs/sentinel.log"   # Relative to project root or absolute path
+  log_format: "json"              # "json" or "text"
+
+  # Minimum severity level to trigger sound/popup: LOW | MEDIUM | HIGH | CRITICAL
+  notify_threshold: "MEDIUM"
+
+ai:
+  enabled: true
+  provider: "ollama"              # "ollama" or "api"
+
+  ollama:
+    url: "http://localhost:11434"
+    model: "llama3"
+
+  api:                            # Used only when provider: "api"
+    url: ""
+    key: ""
+    model: ""
+
+  # Timeout in seconds for AI response
+  timeout: 30
